@@ -1,15 +1,13 @@
 import { createInterface } from 'node:readline'; 
 import { commandExit } from './command_exit.js';
-import {getCommands, CLICommand } from './command_registry.js';
+import { getCommands } from './command_registry.js';
+import { State } from './state.js';
 
 
-const rl = createInterface({
-	input: process.stdin,
-	output: process.stdout,
-	prompt: "Pokedex >  ",
-});
 
-export function startREPL(){
+export function startREPL(state: State){
+	let rl = state.interface;
+	let commands = state.commands;
 	rl.prompt();
 	let callback = "";
 	rl.on("line", (callback) => {
@@ -19,7 +17,6 @@ export function startREPL(){
 			return; 
 		}
 		else{
-			const commands = getCommands();
 			const command = commands[arr[0]];
 
 			if(!command){
@@ -29,7 +26,7 @@ export function startREPL(){
 			}
 
 			try {
-				command.callback(commands);
+				command.callback(state);
 			} catch (err) {
 				console.error("Error executing command: ", err);
 			}
