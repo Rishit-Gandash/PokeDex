@@ -5,12 +5,12 @@ import { State } from './state.js';
 
 
 
-export function startREPL(state: State){
+export async function startREPL(state: State){
 	let rl = state.interface;
 	let commands = state.commands;
 	rl.prompt();
 	let callback = "";
-	rl.on("line", (callback) => {
+	rl.on("line", async (callback) => {
 		const arr = cleanInput(callback);
 		if(arr.length == 0){
 			rl.prompt();
@@ -26,9 +26,9 @@ export function startREPL(state: State){
 			}
 
 			try {
-				command.callback(state);
+				await command.callback(state);
 			} catch (err) {
-				console.error("Error executing command: ", err);
+				console.error("Error executing command: ", (err as Error).message);
 			}
 		}
 		rl.prompt();
